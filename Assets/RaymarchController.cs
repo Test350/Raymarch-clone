@@ -9,12 +9,12 @@ public class RaymarchController : SceneViewFilter
     public Color _MainColor;
 
     [SerializeField] private Shader _Shader = null;
-    public RaymarchShape _shape;
+    
+    public Operation _operation;
 
     private Material _material;
     private Camera _cam;
     private Transform _light;
-
     
 
     public Material Material
@@ -93,6 +93,12 @@ public class RaymarchController : SceneViewFilter
         GL.PopMatrix();
     }
 
+
+
+    
+
+
+
     //Unity event function, called when an image is done rendering to apply post processing effects
     [ImageEffectOpaque]
     void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -108,23 +114,48 @@ public class RaymarchController : SceneViewFilter
         Material.SetMatrix("_CamMatrix", Cam.cameraToWorldMatrix);
         Material.SetColor("_MainColor", _MainColor);
         Material.SetVector("_Light", Light ? Light.forward : Vector3.down);
-        
+
+        /*Vector4[] pos = new Vector4[2];
+        float[] shape = new float[2];
+        float[] sphereRadius = new float[2];
+        float[] torusInner = new float[2];
+        float[] torusOuter = new float[2];
+        float[] boxRoundness = new float[2];
+        float[] coneHeight = new float[2];
+        Vector4[] box = new Vector4[2];
+        Vector4[] roundBox = new Vector4[2];
+        Vector4[] coneRatio = new Vector4[2];
+      
+        for (int i = 0; i < this._operation.shapes.Length; i++)
+        {
+            pos[i] = this._operation.shapes[i].position;
+            shape[i] = (int)this._operation.shapes[i].shape;
+            sphereRadius[i] = this._operation.shapes[i].sphereRadius;
+            torusInner[i] = this._operation.shapes[i].torusInnerRadius;
+            torusOuter[i] = this._operation.shapes[i].torusOuterRadius;
+            boxRoundness[i] = this._operation.shapes[i].roundBoxFactor;
+            coneHeight[i] = this._operation.shapes[i].coneHeight;
+            box[i] = this._operation.shapes[i].boxDimensions;
+            roundBox[i] = this._operation.shapes[i].roundBoxDimensions;
+            coneRatio[i] = this._operation.shapes[i].coneRatio;
+
+        }
+
         //Pass Shape specific values to shader
-        Material.SetVector("_Position", _shape.transform.position);
-        Material.SetInt("_Shape", (int)_shape.shape);
+        Material.SetVectorArray("_Position", pos);
+        Material.SetFloatArray("_Shape", shape);
+        
+        Material.SetFloatArray("_SphereRadius", sphereRadius);
+        Material.SetFloatArray("_TorusInner", torusInner);
+        Material.SetFloatArray("_TorusOuter", torusOuter);
+        Material.SetFloatArray("_BoxRoundness", boxRoundness);
+        Material.SetFloatArray("_ConeHeight", coneHeight);
 
-        //This seems pretty bad, can probably be better
-        //I should find a way to encapsulate these in a single struct
-        //and pass it in all at once
-        Material.SetFloat("_SphereRadius", _shape.sphereRadius);
-        Material.SetFloat("_TorusInner", _shape.torusInnerRadius);
-        Material.SetFloat("_TorusOuter", _shape.torusOuterRadius);
-        Material.SetFloat("_BoxRoundness", _shape.roundBoxFactor);
-        Material.SetFloat("_ConeHeight", _shape.coneHeight);
+        Material.SetVectorArray("_Box", box);
+        Material.SetVectorArray("_RoundBox", roundBox);
+        Material.SetVectorArray("_ConeRatio", coneRatio);*/
 
-        Material.SetVector("_Box", _shape.boxDimensions);
-        Material.SetVector("_RoundBox", _shape.roundBoxDimensions);
-        Material.SetVector("_ConeRatio", _shape.coneRatio);
+        Material.SetFloat("_Blend", this._operation.blendStrength);
 
         Blit(source, destination, Material, 0);
     }
@@ -154,4 +185,10 @@ public class RaymarchController : SceneViewFilter
 
         return corners;
     }
+
+    void PassShapeValues()
+    {
+
+    }
+    
 }

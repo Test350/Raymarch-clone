@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+[Serializable]
 public class RaymarchShape : MonoBehaviour
 { 
     public enum Shape
@@ -17,6 +17,13 @@ public class RaymarchShape : MonoBehaviour
 
  
     public Shape shape;
+    public Vector3 position
+    {
+        get
+        {
+            return this.transform.position;
+        }
+    }
 
     public float sphereRadius;
 
@@ -32,3 +39,4 @@ public class RaymarchShape : MonoBehaviour
     public Vector2 coneRatio;
     
 }
+

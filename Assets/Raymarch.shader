@@ -25,21 +25,26 @@
             uniform float4x4 _CamMatrix;            
             uniform float3 _Light;
 
-            //Shape info
-            uniform int _Shape;
-            uniform float3 _Position;
             
-            uniform float _SphereRadius;
-            uniform float _TorusInner;
-            uniform float _TorusOuter;
-            uniform float _BoxRoundness;
-            uniform float _ConeHeight;
+            /*uniform float3[] position;
 
-            uniform float2 _ConeRatio;
-            uniform float3 _Box;
-            uniform float3 _RoundBox;
+            uniform int[] _Shape;
+            uniform float3[] _Position;
 
-            
+            uniform float[] _SphereRadius;
+            uniform float[] _TorusInner;
+            uniform float[] _TorusOuter;
+            uniform float[] _BoxRoundness;
+            uniform float[] _ConeHeight;
+
+            uniform float2[] _ConeRatio;
+            uniform float3[] _Box;
+            uniform float3[] _RoundBox;*/
+
+           
+            uniform int _Operation;
+            uniform float _Blend;
+
 
             //How many times each ray is marched
             //Higher values give higher resolution (and potentially longer draw distances) but lower performance
@@ -78,33 +83,63 @@
             //This function will later be adjusted to handle more shapes & different kinds
             //For now it will just draw the distance from a sphere
             float SurfaceDistance(float3 p)
-            {
-                p -= _Position;
-
-                switch (_Shape) 
+            {                                    
+                /*for (int i = 0; i < 2; i++)
                 {
-                    case 0:
-                        return sdSphere(p, _SphereRadius);
-                        break;
+                    p -= _Position[i];
 
+                    float[] dist;
+
+                    switch (_Shape[i])
+                    {
+                        case 0:
+                            dist[i] = sdSphere(p, _SphereRadius[i]);
+                            break;
+
+                        case 1:
+                            dist[i] = sdBox(p, _Box[i]);
+                            break;
+
+                        case 2:
+                            dist[i] = sdTorus(p, _TorusOuter[i], _TorusInner[i]);
+                            break;
+
+                        case 3:
+                            dist[i] = sdCone(p, _ConeRatio[i], _ConeHeight[i]);
+                            break;
+
+                        case 4:
+                            dist[i] = sdRoundBox(p, _RoundBox[i], _BoxRoundness[i]);
+                            break;
+                    }
+                }*/
+
+                /*switch (_Operation) 
+                {
                     case 1:
-                        return sdBox(p, _Box);
+                        return OpAdd(dist[1], dist[2]);
                         break;
-
                     case 2:
-                        return sdTorus(p, _TorusOuter, _TorusInner);
+                        return OpSubtract(dist[1], dist[2]);
                         break;
-
                     case 3:
-                        return sdCone(p, _ConeRatio, _ConeHeight);
+                        return OpIntersection(dist[1], dist[2]);
                         break;
-
                     case 4:
-                        return sdRoundBox(p, _RoundBox, _BoxRoundness);
+                        return OpBlend(dist[1], dist[2], _Blend);
                         break;
-                }
+                }*/
 
-                return 0;
+                float d1 = sdSphere(p, 1);
+                float d2 = sdTorus(p + float3(0.24f, 1, 0), 1.0f, 0.5f);
+
+                //float d3 = opBlend(d1, d2, _Blend);
+                //float d4 = sdBox(p + float3(0,1,1), float3(1, 1, 1));
+
+
+                             
+                return opBlend(d1, d2, _Blend); //demo this
+                //return opIntersection(d4, d3);
             }
 
             //For a signed distances field, the normal of any given point is defined as the gradient of the distance field
